@@ -74,6 +74,9 @@ func (wrapper *Sentry) Capture(err error, _panic bool) {
 
 				// Setting the stacktrace of the error as an extra along with any other extras set in the error
 				if extras := errors.Extras(err); extras != nil{
+					if abortLog, ok := extras["custom_service"]; ok && abortLog.(bool) {
+						return
+					}
 					scope.SetExtras(extras)
 					scope.SetExtra("stacktrace", errors.Stacktrace(err))
 				} else {
